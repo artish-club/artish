@@ -10,5 +10,8 @@
   },
   "scripts": {
     "start": "node src/index.js"
+  },
+  "devDependencies": {
+    "@playlyfe/gql": "^2.6.1"
   }
 }

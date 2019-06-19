@@ -12,6 +12,19 @@ type User {
   id: ID! @id
   email: String! @unique
   password: String!
-  name: String
+  name: String! @unique
   posts: [Post!]!
+  products: [Product!]!
+}
+
+type Product {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  published: Boolean! @default(value: false)
+  title: String!
+  description: String
+  author: User!
+  price: Float! 
+  delivery: String
 }
