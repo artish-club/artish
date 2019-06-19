@@ -31,6 +31,4 @@ const Post = graphql(GetPost)(props => {
     return <p>Loading...</p>;
   });
 
-
-
 export default Post; 

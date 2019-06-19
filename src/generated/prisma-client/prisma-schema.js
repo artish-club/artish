@@ -11,6 +11,10 @@ type AggregateProduct {
   count: Int!
 }
 
+type AggregateProject {
+  count: Int!
+}
+
 type AggregateUser {
   count: Int!
 }
@@ -36,6 +40,12 @@ type Mutation {
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  createProject(data: ProjectCreateInput!): Project!
+  updateProject(data: ProjectUpdateInput!, where: ProjectWhereUniqueInput!): Project
+  updateManyProjects(data: ProjectUpdateManyMutationInput!, where: ProjectWhereInput): BatchPayload!
+  upsertProject(where: ProjectWhereUniqueInput!, create: ProjectCreateInput!, update: ProjectUpdateInput!): Project!
+  deleteProject(where: ProjectWhereUniqueInput!): Project
+  deleteManyProjects(where: ProjectWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -83,6 +93,11 @@ input PostCreateInput {
   title: String!
   content: String
   author: UserCreateOneWithoutPostsInput!
+}
+
+input PostCreateManyInput {
+  create: [PostCreateInput!]
+  connect: [PostWhereUniqueInput!]
 }
 
 input PostCreateManyWithoutAuthorInput {
@@ -210,6 +225,13 @@ input PostSubscriptionWhereInput {
   NOT: [PostSubscriptionWhereInput!]
 }
 
+input PostUpdateDataInput {
+  published: Boolean
+  title: String
+  content: String
+  author: UserUpdateOneRequiredWithoutPostsInput
+}
+
 input PostUpdateInput {
   published: Boolean
   title: String
@@ -221,6 +243,18 @@ input PostUpdateManyDataInput {
   published: Boolean
   title: String
   content: String
+}
+
+input PostUpdateManyInput {
+  create: [PostCreateInput!]
+  update: [PostUpdateWithWhereUniqueNestedInput!]
+  upsert: [PostUpsertWithWhereUniqueNestedInput!]
+  delete: [PostWhereUniqueInput!]
+  connect: [PostWhereUniqueInput!]
+  set: [PostWhereUniqueInput!]
+  disconnect: [PostWhereUniqueInput!]
+  deleteMany: [PostScalarWhereInput!]
+  updateMany: [PostUpdateManyWithWhereNestedInput!]
 }
 
 input PostUpdateManyMutationInput {
@@ -252,9 +286,20 @@ input PostUpdateWithoutAuthorDataInput {
   content: String
 }
 
+input PostUpdateWithWhereUniqueNestedInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateDataInput!
+}
+
 input PostUpdateWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   data: PostUpdateWithoutAuthorDataInput!
+}
+
+input PostUpsertWithWhereUniqueNestedInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateDataInput!
+  create: PostCreateInput!
 }
 
 input PostUpsertWithWhereUniqueWithoutAuthorInput {
@@ -671,6 +716,322 @@ input ProductWhereUniqueInput {
   id: ID
 }
 
+type Project {
+  id: ID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  title: String!
+  description: String
+  author: User!
+  customer: User
+  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
+}
+
+type ProjectConnection {
+  pageInfo: PageInfo!
+  edges: [ProjectEdge]!
+  aggregate: AggregateProject!
+}
+
+input ProjectCreateInput {
+  id: ID
+  title: String!
+  description: String
+  author: UserCreateOneWithoutProjectsInput!
+  customer: UserCreateOneWithoutPurchasesInput
+  posts: PostCreateManyInput
+}
+
+input ProjectCreateManyWithoutAuthorInput {
+  create: [ProjectCreateWithoutAuthorInput!]
+  connect: [ProjectWhereUniqueInput!]
+}
+
+input ProjectCreateManyWithoutCustomerInput {
+  create: [ProjectCreateWithoutCustomerInput!]
+  connect: [ProjectWhereUniqueInput!]
+}
+
+input ProjectCreateWithoutAuthorInput {
+  id: ID
+  title: String!
+  description: String
+  customer: UserCreateOneWithoutPurchasesInput
+  posts: PostCreateManyInput
+}
+
+input ProjectCreateWithoutCustomerInput {
+  id: ID
+  title: String!
+  description: String
+  author: UserCreateOneWithoutProjectsInput!
+  posts: PostCreateManyInput
+}
+
+type ProjectEdge {
+  node: Project!
+  cursor: String!
+}
+
+enum ProjectOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  title_ASC
+  title_DESC
+  description_ASC
+  description_DESC
+}
+
+type ProjectPreviousValues {
+  id: ID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  title: String!
+  description: String
+}
+
+input ProjectScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  AND: [ProjectScalarWhereInput!]
+  OR: [ProjectScalarWhereInput!]
+  NOT: [ProjectScalarWhereInput!]
+}
+
+type ProjectSubscriptionPayload {
+  mutation: MutationType!
+  node: Project
+  updatedFields: [String!]
+  previousValues: ProjectPreviousValues
+}
+
+input ProjectSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProjectWhereInput
+  AND: [ProjectSubscriptionWhereInput!]
+  OR: [ProjectSubscriptionWhereInput!]
+  NOT: [ProjectSubscriptionWhereInput!]
+}
+
+input ProjectUpdateInput {
+  title: String
+  description: String
+  author: UserUpdateOneRequiredWithoutProjectsInput
+  customer: UserUpdateOneWithoutPurchasesInput
+  posts: PostUpdateManyInput
+}
+
+input ProjectUpdateManyDataInput {
+  title: String
+  description: String
+}
+
+input ProjectUpdateManyMutationInput {
+  title: String
+  description: String
+}
+
+input ProjectUpdateManyWithoutAuthorInput {
+  create: [ProjectCreateWithoutAuthorInput!]
+  delete: [ProjectWhereUniqueInput!]
+  connect: [ProjectWhereUniqueInput!]
+  set: [ProjectWhereUniqueInput!]
+  disconnect: [ProjectWhereUniqueInput!]
+  update: [ProjectUpdateWithWhereUniqueWithoutAuthorInput!]
+  upsert: [ProjectUpsertWithWhereUniqueWithoutAuthorInput!]
+  deleteMany: [ProjectScalarWhereInput!]
+  updateMany: [ProjectUpdateManyWithWhereNestedInput!]
+}
+
+input ProjectUpdateManyWithoutCustomerInput {
+  create: [ProjectCreateWithoutCustomerInput!]
+  delete: [ProjectWhereUniqueInput!]
+  connect: [ProjectWhereUniqueInput!]
+  set: [ProjectWhereUniqueInput!]
+  disconnect: [ProjectWhereUniqueInput!]
+  update: [ProjectUpdateWithWhereUniqueWithoutCustomerInput!]
+  upsert: [ProjectUpsertWithWhereUniqueWithoutCustomerInput!]
+  deleteMany: [ProjectScalarWhereInput!]
+  updateMany: [ProjectUpdateManyWithWhereNestedInput!]
+}
+
+input ProjectUpdateManyWithWhereNestedInput {
+  where: ProjectScalarWhereInput!
+  data: ProjectUpdateManyDataInput!
+}
+
+input ProjectUpdateWithoutAuthorDataInput {
+  title: String
+  description: String
+  customer: UserUpdateOneWithoutPurchasesInput
+  posts: PostUpdateManyInput
+}
+
+input ProjectUpdateWithoutCustomerDataInput {
+  title: String
+  description: String
+  author: UserUpdateOneRequiredWithoutProjectsInput
+  posts: PostUpdateManyInput
+}
+
+input ProjectUpdateWithWhereUniqueWithoutAuthorInput {
+  where: ProjectWhereUniqueInput!
+  data: ProjectUpdateWithoutAuthorDataInput!
+}
+
+input ProjectUpdateWithWhereUniqueWithoutCustomerInput {
+  where: ProjectWhereUniqueInput!
+  data: ProjectUpdateWithoutCustomerDataInput!
+}
+
+input ProjectUpsertWithWhereUniqueWithoutAuthorInput {
+  where: ProjectWhereUniqueInput!
+  update: ProjectUpdateWithoutAuthorDataInput!
+  create: ProjectCreateWithoutAuthorInput!
+}
+
+input ProjectUpsertWithWhereUniqueWithoutCustomerInput {
+  where: ProjectWhereUniqueInput!
+  update: ProjectUpdateWithoutCustomerDataInput!
+  create: ProjectCreateWithoutCustomerInput!
+}
+
+input ProjectWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  author: UserWhereInput
+  customer: UserWhereInput
+  posts_every: PostWhereInput
+  posts_some: PostWhereInput
+  posts_none: PostWhereInput
+  AND: [ProjectWhereInput!]
+  OR: [ProjectWhereInput!]
+  NOT: [ProjectWhereInput!]
+}
+
+input ProjectWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   post(where: PostWhereUniqueInput!): Post
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
@@ -678,6 +1039,9 @@ type Query {
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
+  project(where: ProjectWhereUniqueInput!): Project
+  projects(where: ProjectWhereInput, orderBy: ProjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Project]!
+  projectsConnection(where: ProjectWhereInput, orderBy: ProjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProjectConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -687,6 +1051,7 @@ type Query {
 type Subscription {
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  project(where: ProjectSubscriptionWhereInput): ProjectSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -695,8 +1060,12 @@ type User {
   email: String!
   password: String!
   name: String!
+  about: String
+  age: Int!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  projects(where: ProjectWhereInput, orderBy: ProjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Project!]
+  purchases(where: ProjectWhereInput, orderBy: ProjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Project!]
 }
 
 type UserConnection {
@@ -710,8 +1079,12 @@ input UserCreateInput {
   email: String!
   password: String!
   name: String!
+  about: String
+  age: Int!
   posts: PostCreateManyWithoutAuthorInput
   products: ProductCreateManyWithoutAuthorInput
+  projects: ProjectCreateManyWithoutAuthorInput
+  purchases: ProjectCreateManyWithoutCustomerInput
 }
 
 input UserCreateOneWithoutPostsInput {
@@ -724,12 +1097,26 @@ input UserCreateOneWithoutProductsInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutProjectsInput {
+  create: UserCreateWithoutProjectsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutPurchasesInput {
+  create: UserCreateWithoutPurchasesInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutPostsInput {
   id: ID
   email: String!
   password: String!
   name: String!
+  about: String
+  age: Int!
   products: ProductCreateManyWithoutAuthorInput
+  projects: ProjectCreateManyWithoutAuthorInput
+  purchases: ProjectCreateManyWithoutCustomerInput
 }
 
 input UserCreateWithoutProductsInput {
@@ -737,7 +1124,35 @@ input UserCreateWithoutProductsInput {
   email: String!
   password: String!
   name: String!
+  about: String
+  age: Int!
   posts: PostCreateManyWithoutAuthorInput
+  projects: ProjectCreateManyWithoutAuthorInput
+  purchases: ProjectCreateManyWithoutCustomerInput
+}
+
+input UserCreateWithoutProjectsInput {
+  id: ID
+  email: String!
+  password: String!
+  name: String!
+  about: String
+  age: Int!
+  posts: PostCreateManyWithoutAuthorInput
+  products: ProductCreateManyWithoutAuthorInput
+  purchases: ProjectCreateManyWithoutCustomerInput
+}
+
+input UserCreateWithoutPurchasesInput {
+  id: ID
+  email: String!
+  password: String!
+  name: String!
+  about: String
+  age: Int!
+  posts: PostCreateManyWithoutAuthorInput
+  products: ProductCreateManyWithoutAuthorInput
+  projects: ProjectCreateManyWithoutAuthorInput
 }
 
 type UserEdge {
@@ -754,6 +1169,10 @@ enum UserOrderByInput {
   password_DESC
   name_ASC
   name_DESC
+  about_ASC
+  about_DESC
+  age_ASC
+  age_DESC
 }
 
 type UserPreviousValues {
@@ -761,6 +1180,8 @@ type UserPreviousValues {
   email: String!
   password: String!
   name: String!
+  about: String
+  age: Int!
 }
 
 type UserSubscriptionPayload {
@@ -785,14 +1206,20 @@ input UserUpdateInput {
   email: String
   password: String
   name: String
+  about: String
+  age: Int
   posts: PostUpdateManyWithoutAuthorInput
   products: ProductUpdateManyWithoutAuthorInput
+  projects: ProjectUpdateManyWithoutAuthorInput
+  purchases: ProjectUpdateManyWithoutCustomerInput
 }
 
 input UserUpdateManyMutationInput {
   email: String
   password: String
   name: String
+  about: String
+  age: Int
 }
 
 input UserUpdateOneRequiredWithoutPostsInput {
@@ -809,18 +1236,64 @@ input UserUpdateOneRequiredWithoutProductsInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutProjectsInput {
+  create: UserCreateWithoutProjectsInput
+  update: UserUpdateWithoutProjectsDataInput
+  upsert: UserUpsertWithoutProjectsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateOneWithoutPurchasesInput {
+  create: UserCreateWithoutPurchasesInput
+  update: UserUpdateWithoutPurchasesDataInput
+  upsert: UserUpsertWithoutPurchasesInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateWithoutPostsDataInput {
   email: String
   password: String
   name: String
+  about: String
+  age: Int
   products: ProductUpdateManyWithoutAuthorInput
+  projects: ProjectUpdateManyWithoutAuthorInput
+  purchases: ProjectUpdateManyWithoutCustomerInput
 }
 
 input UserUpdateWithoutProductsDataInput {
   email: String
   password: String
   name: String
+  about: String
+  age: Int
   posts: PostUpdateManyWithoutAuthorInput
+  projects: ProjectUpdateManyWithoutAuthorInput
+  purchases: ProjectUpdateManyWithoutCustomerInput
+}
+
+input UserUpdateWithoutProjectsDataInput {
+  email: String
+  password: String
+  name: String
+  about: String
+  age: Int
+  posts: PostUpdateManyWithoutAuthorInput
+  products: ProductUpdateManyWithoutAuthorInput
+  purchases: ProjectUpdateManyWithoutCustomerInput
+}
+
+input UserUpdateWithoutPurchasesDataInput {
+  email: String
+  password: String
+  name: String
+  about: String
+  age: Int
+  posts: PostUpdateManyWithoutAuthorInput
+  products: ProductUpdateManyWithoutAuthorInput
+  projects: ProjectUpdateManyWithoutAuthorInput
 }
 
 input UserUpsertWithoutPostsInput {
@@ -831,6 +1304,16 @@ input UserUpsertWithoutPostsInput {
 input UserUpsertWithoutProductsInput {
   update: UserUpdateWithoutProductsDataInput!
   create: UserCreateWithoutProductsInput!
+}
+
+input UserUpsertWithoutProjectsInput {
+  update: UserUpdateWithoutProjectsDataInput!
+  create: UserCreateWithoutProjectsInput!
+}
+
+input UserUpsertWithoutPurchasesInput {
+  update: UserUpdateWithoutPurchasesDataInput!
+  create: UserCreateWithoutPurchasesInput!
 }
 
 input UserWhereInput {
@@ -890,12 +1373,40 @@ input UserWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  about: String
+  about_not: String
+  about_in: [String!]
+  about_not_in: [String!]
+  about_lt: String
+  about_lte: String
+  about_gt: String
+  about_gte: String
+  about_contains: String
+  about_not_contains: String
+  about_starts_with: String
+  about_not_starts_with: String
+  about_ends_with: String
+  about_not_ends_with: String
+  age: Int
+  age_not: Int
+  age_in: [Int!]
+  age_not_in: [Int!]
+  age_lt: Int
+  age_lte: Int
+  age_gt: Int
+  age_gte: Int
   posts_every: PostWhereInput
   posts_some: PostWhereInput
   posts_none: PostWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  projects_every: ProjectWhereInput
+  projects_some: ProjectWhereInput
+  projects_none: ProjectWhereInput
+  purchases_every: ProjectWhereInput
+  purchases_some: ProjectWhereInput
+  purchases_none: ProjectWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

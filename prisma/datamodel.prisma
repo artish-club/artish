@@ -1,3 +1,16 @@
+type User {
+  id: ID! @id
+  email: String! @unique
+  password: String!
+  name: String! @unique
+  about: String
+  age: Int!
+  posts: [Post!]
+  products: [Product!]
+  projects: [Project!] @relation(name: "ProjectByUser")
+  purchases: [Project!] @relation(name: "PurchasedByUser")
+}
+
 type Post {
   id: ID! @id
   createdAt: DateTime! @createdAt
@@ -6,15 +19,6 @@ type Post {
   title: String!
   content: String
   author: User!
-}
-
-type User {
-  id: ID! @id
-  email: String! @unique
-  password: String!
-  name: String! @unique
-  posts: [Post!]!
-  products: [Product!]!
 }
 
 type Product {
@@ -27,4 +31,15 @@ type Product {
   author: User!
   price: Float! 
   delivery: String
+}
+
+type Project {
+  id: ID! @id
+  createdAt: DateTime @createdAt
+  updatedAt: DateTime @updatedAt
+  title: String!
+  description: String
+  author: User! @relation(name: "ProjectByUser")
+  customer: User @relation(name: "PurchasedByUser")
+  posts: [Post!]
 }
