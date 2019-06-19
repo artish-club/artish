@@ -1,2 +1,1 @@
-# artish
-main app
+Artish Club
