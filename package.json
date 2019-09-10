@@ -1,0 +1,13 @@
+{
+  "name": "artish",
+  "version": "1.0.0",
+  "description": "a social marketplace for artists and patrons",
+  "main": "index.js",
+  "repository": "git@github.com:artish-club/artish.git",
+  "author": "Andrew Hemans",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "prisma": "^1.34.8"
+  }
+}
